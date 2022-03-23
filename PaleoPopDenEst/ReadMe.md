@@ -1,0 +1,1 @@
+folder contains a series of maps as PDFs showing the predicted minimum population density from 10- (`PaleoPopDenEst-10.PDF`), 50-(`PaleoPopDenEst-50.PDF`), and 90-percentiles (`PaleoPopDenEst-90.PDF`) gGAMs. 
