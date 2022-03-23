@@ -1,0 +1,3 @@
+The folder include three `.RData` files that have the predicted population density for each evaluated variable `PaleoPopDenEst10.RData`, the minimum populations density predicted for any given grid `MinPopPopDen10.RData`, and the environmental variable that predicted the lowest populations density `LimFact10.RData`. While predicted population density `.RData` files include the values for the full region, minimum populations density and Limiting factors `.RData` files mask-out all the areas where covered by Ice as defined by the ICE-6G gridded data product ^1^.
+
+1. Peltier WR, Argus DF, Drummond R. 2015 Space geodesy constrains ice age terminal deglaciation: the global ICE-6G_C (VM5a) model. J. Geophys. Res. Solid Earth 120, 450–487. (doi:10.1002/ 2014JB011176)
