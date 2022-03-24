@@ -3,8 +3,10 @@
 ####################################################################################
 rm(list = ls());gc()
 require(raster)
-# Estimate population density using the 50-percentile model
 
+# .................................................................................#
+#          Estimate population density using the 50-percentile model               #
+# .................................................................................#
 # Load Ice Layers from ICE-6G-C
 IceList <- readRDS(file = "~/Dropbox/Aarhus Assistant Professor/Projects/4. PopulationDensity-LGMtoNow/Data/IceMaps/ICE-6G-C/Ice0_5DD.RData")
 #IceList <- readRDS(file = "https://www.dropbox.com/s/34jy6jpb6usbqju/Ice0_5DD.RData?dl=1")
@@ -48,8 +50,9 @@ for (i in 1:length(PaleoPopDenEst50)){#(i<-1)
 }
 dev.off()
 
-
-# Estimate population density using the 90-percentile model
+# .................................................................................#
+#          Estimate population density using the 90-percentile model               #
+# .................................................................................#
 
 # Load Ice Layers from ICE-6G-C
 IceList <- readRDS(file = "~/Dropbox/Aarhus Assistant Professor/Projects/4. PopulationDensity-LGMtoNow/Data/IceMaps/ICE-6G-C/Ice0_5DD.RData")
@@ -94,7 +97,9 @@ for (i in 1:length(PaleoPopDenEst90)){#(i<-1)
 }
 dev.off()
 
-# Estimate population density using the 10-percentile model
+# .................................................................................#
+#          Estimate population density using the 10-percentile model               #
+# .................................................................................#
 
 # Load Ice Layers from ICE-6G-C
 IceList <- readRDS(file = "~/Dropbox/Aarhus Assistant Professor/Projects/4. PopulationDensity-LGMtoNow/Data/IceMaps/ICE-6G-C/Ice0_5DD.RData")
@@ -139,23 +144,38 @@ for (i in 1:length(PaleoPopDenEst10)){#(i<-1)
 }
 dev.off()
 
-##############################################
-####    Step 5b. Map the limiting factor  ####
-##############################################
+####################################################################################
+####    Step 5b. Map the limiting factor                                        ####
+####################################################################################
+
+# .................................................................................#
+#          Estimate the 50-percentile model limiting factor                        #
+# .................................................................................#
 rm(list = ls());gc()
 require(raster)
-# Estimate population density using the 50-percentile model
 # Vars use 
 EnvVarUse <- c("ET",#ff7f00
                "PET",#fdbf6f
                "NPP",#33a02c
                "MCM",#a6cee3
-               "MWM",#fb9a99
+#               "MWM",#fb9a99
                "TS",#6a3d9a
                "TAP", #e31a1c
                "PDM",#b2df8a
                "PWM",#1f78b4
                "PS")#cab2d6
+
+ColUse <- c("#ff7f00",#"ET"
+            "#fdbf6f",#"PET"
+            "#33a02c",#"NPP",
+            "#a6cee3",#"MCM"
+#           "#fb9a99",#"MWM"
+            "#6a3d9a",#"TS"
+            "#e31a1c",#"TAP", 
+            "#b2df8a",#"PDM",
+            "#1f78b4",#"PWM",
+            "#cab2d6")#"PS"
+
 
 # Load Ice Layers from ICE-6G-C
 IceList <- readRDS(file = "~/Dropbox/Aarhus Assistant Professor/Projects/4. PopulationDensity-LGMtoNow/Data/IceMaps/ICE-6G-C/Ice0_5DD.RData")
@@ -177,8 +197,8 @@ for (i in 1:length(LimFact50)){#i<-1
   Prop <- round((table(factor(LimFact[],level=1:10))/sum(table(factor(LimFact[],level=1:10))))*100,1)
   #Plot the Limiting factors
   plot(LimFact,
-       zlim=c(1,10),
-       col = c("#ff7f00", "#fdbf6f", "#33a02c", "#a6cee3", "#fb9a99", "#6a3d9a", "#e31a1c", "#b2df8a", "#1f78b4", "#cab2d6"),
+       zlim=c(1,length(EnvVarUse)),
+       col = ColUse,
        legend.width=2, legend.shrink=1,
        main = paste0(gsub("BP.","",PerUse),"0 yrs-BP"), cex.main=2,
        las=1,
@@ -192,22 +212,22 @@ for (i in 1:length(LimFact50)){#i<-1
 dev.off()
 
 pdf("~/Dropbox/Aarhus Assistant Professor/Projects/4. PopulationDensity-LGMtoNow/Results/LimFact/LimFact50Ver2.PDF",)
-for (i in 1:length(LimFact50)){#i<-1
+for (i in 1:length(LimFact50)){#i<-20
   #Load the limiting factoirs Raster
   LimFact <- LimFact50[[i]]
   # table of proportions
-  Prop <- round((table(factor(LimFact[],level=1:10))/sum(table(factor(LimFact[],level=1:10))))*100,1)
+  Prop <- round((table(factor(LimFact[],level=1: length(EnvVarUse)))/sum(table(factor(LimFact[],level=1: length(EnvVarUse)))))*100,1)
   # Add the cie to the raster
-  LimFact[IceList[[i]][]==100] <- 11
+  LimFact[IceList[[i]][]==100] <- c(length(EnvVarUse)+1)
   # Make the rastr cathegorical
   LimFactFct <- ratify(LimFact)
   # add a attribute table to the raster
-  rat <- data.frame(ID=1:11,
+  rat <- data.frame(ID=1:c(length(EnvVarUse)+1),
                     Env = c(paste0(EnvVarUse,": ",as.numeric(Prop),"%"),"Ice"),
-                    code = 1:11)
+                    code = 1:c(length(EnvVarUse)+1))
   levels(LimFactFct) <- rat
   # define the colors
-  rat$Col <- c("#ff7f00", "#fdbf6f", "#33a02c", "#a6cee3", "#fb9a99", "#6a3d9a", "#e31a1c", "#b2df8a", "#1f78b4", "#cab2d6","darkgrey")
+  rat$Col <- c(ColUse,"Grey")
   # plot the raster using a trellis plot
   print(rasterVis::levelplot(LimFactFct,
                              main = paste0(gsub("BP.","",names(IceList)[i]),"0 yrs-BP"),
@@ -215,8 +235,35 @@ for (i in 1:length(LimFact50)){#i<-1
                              cex=0.6))
 }
 dev.off()
+# .................................................................................#
+#          Estimate the 90-percentile model limiting factor                        #
+# .................................................................................#
+rm(list = ls());gc()
+require(raster)
+# Vars use 
+EnvVarUse <- c("ET",#ff7f00
+               "PET",#fdbf6f
+               "NPP",#33a02c
+               "MCM",#a6cee3
+#               "MWM",#fb9a99
+               "TS",#6a3d9a
+               "TAP", #e31a1c
+               "PDM",#b2df8a
+               "PWM",#1f78b4
+               "PS")#cab2d6
 
-# Estimate population density using the 90-percentile model
+ColUse <- c("#ff7f00",#"ET"
+            "#fdbf6f",#"PET"
+            "#33a02c",#"NPP",
+            "#a6cee3",#"MCM"
+#           "#fb9a99",#"MWM"
+            "#6a3d9a",#"TS"
+            "#e31a1c",#"TAP", 
+            "#b2df8a",#"PDM",
+            "#1f78b4",#"PWM",
+            "#cab2d6")#"PS"
+
+
 # Load Ice Layers from ICE-6G-C
 IceList <- readRDS(file = "~/Dropbox/Aarhus Assistant Professor/Projects/4. PopulationDensity-LGMtoNow/Data/IceMaps/ICE-6G-C/Ice0_5DD.RData")
 #IceList <- readRDS(file = "https://www.dropbox.com/s/34jy6jpb6usbqju/Ice0_5DD.RData?dl=1")
@@ -237,8 +284,8 @@ for (i in 1:length(LimFact90)){#i<-1
   Prop <- round((table(factor(LimFact[],level=1:10))/sum(table(factor(LimFact[],level=1:10))))*100,1)
   #Plot the Limiting factors
   plot(LimFact,
-       zlim=c(1,10),
-       col = c("#ff7f00", "#fdbf6f", "#33a02c", "#a6cee3", "#fb9a99", "#6a3d9a", "#e31a1c", "#b2df8a", "#1f78b4", "#cab2d6"),
+       zlim=c(1,length(EnvVarUse)),
+       col = ColUse,
        legend.width=2, legend.shrink=1,
        main = paste0(gsub("BP.","",PerUse),"0 yrs-BP"), cex.main=2,
        las=1,
@@ -252,22 +299,22 @@ for (i in 1:length(LimFact90)){#i<-1
 dev.off()
 
 pdf("~/Dropbox/Aarhus Assistant Professor/Projects/4. PopulationDensity-LGMtoNow/Results/LimFact/LimFact90Ver2.PDF",)
-for (i in 1:length(LimFact90)){#i<-1
+for (i in 1:length(LimFact90)){#i<-20
   #Load the limiting factoirs Raster
   LimFact <- LimFact90[[i]]
   # table of proportions
-  Prop <- round((table(factor(LimFact[],level=1:10))/sum(table(factor(LimFact[],level=1:10))))*100,1)
+  Prop <- round((table(factor(LimFact[],level=1: length(EnvVarUse)))/sum(table(factor(LimFact[],level=1: length(EnvVarUse)))))*100,1)
   # Add the cie to the raster
-  LimFact[IceList[[i]][]==100] <- 11
+  LimFact[IceList[[i]][]==100] <- c(length(EnvVarUse)+1)
   # Make the rastr cathegorical
   LimFactFct <- ratify(LimFact)
   # add a attribute table to the raster
-  rat <- data.frame(ID=1:11,
+  rat <- data.frame(ID=1:c(length(EnvVarUse)+1),
                     Env = c(paste0(EnvVarUse,": ",as.numeric(Prop),"%"),"Ice"),
-                    code = 1:11)
+                    code = 1:c(length(EnvVarUse)+1))
   levels(LimFactFct) <- rat
   # define the colors
-  rat$Col <- c("#ff7f00", "#fdbf6f", "#33a02c", "#a6cee3", "#fb9a99", "#6a3d9a", "#e31a1c", "#b2df8a", "#1f78b4", "#cab2d6","darkgrey")
+  rat$Col <- c(ColUse,"Grey")
   # plot the raster using a trellis plot
   print(rasterVis::levelplot(LimFactFct,
                              main = paste0(gsub("BP.","",names(IceList)[i]),"0 yrs-BP"),
@@ -275,8 +322,35 @@ for (i in 1:length(LimFact90)){#i<-1
                              cex=0.6))
 }
 dev.off()
+# .................................................................................#
+#          Estimate the 10-percentile model limiting factor                        #
+# .................................................................................#
+rm(list = ls());gc()
+require(raster)
+# Vars use 
+EnvVarUse <- c("ET",#ff7f00
+               "PET",#fdbf6f
+               "NPP",#33a02c
+               "MCM",#a6cee3
+#               "MWM",#fb9a99
+               "TS",#6a3d9a
+               "TAP", #e31a1c
+               "PDM",#b2df8a
+               "PWM",#1f78b4
+               "PS")#cab2d6
 
-# Estimate population density using the 10-percentile model
+ColUse <- c("#ff7f00",#"ET"
+            "#fdbf6f",#"PET"
+            "#33a02c",#"NPP",
+            "#a6cee3",#"MCM"
+#           "#fb9a99",#"MWM"
+            "#6a3d9a",#"TS"
+            "#e31a1c",#"TAP", 
+            "#b2df8a",#"PDM",
+            "#1f78b4",#"PWM",
+            "#cab2d6")#"PS"
+
+
 # Load Ice Layers from ICE-6G-C
 IceList <- readRDS(file = "~/Dropbox/Aarhus Assistant Professor/Projects/4. PopulationDensity-LGMtoNow/Data/IceMaps/ICE-6G-C/Ice0_5DD.RData")
 #IceList <- readRDS(file = "https://www.dropbox.com/s/34jy6jpb6usbqju/Ice0_5DD.RData?dl=1")
@@ -297,8 +371,8 @@ for (i in 1:length(LimFact10)){#i<-1
   Prop <- round((table(factor(LimFact[],level=1:10))/sum(table(factor(LimFact[],level=1:10))))*100,1)
   #Plot the Limiting factors
   plot(LimFact,
-       zlim=c(1,10),
-       col = c("#ff7f00", "#fdbf6f", "#33a02c", "#a6cee3", "#fb9a99", "#6a3d9a", "#e31a1c", "#b2df8a", "#1f78b4", "#cab2d6"),
+       zlim=c(1,length(EnvVarUse)),
+       col = ColUse,
        legend.width=2, legend.shrink=1,
        main = paste0(gsub("BP.","",PerUse),"0 yrs-BP"), cex.main=2,
        las=1,
@@ -312,22 +386,22 @@ for (i in 1:length(LimFact10)){#i<-1
 dev.off()
 
 pdf("~/Dropbox/Aarhus Assistant Professor/Projects/4. PopulationDensity-LGMtoNow/Results/LimFact/LimFact10Ver2.PDF",)
-for (i in 1:length(LimFact10)){#i<-1
+for (i in 1:length(LimFact10)){#i<-20
   #Load the limiting factoirs Raster
   LimFact <- LimFact10[[i]]
   # table of proportions
-  Prop <- round((table(factor(LimFact[],level=1:10))/sum(table(factor(LimFact[],level=1:10))))*100,1)
+  Prop <- round((table(factor(LimFact[],level=1: length(EnvVarUse)))/sum(table(factor(LimFact[],level=1: length(EnvVarUse)))))*100,1)
   # Add the cie to the raster
-  LimFact[IceList[[i]][]==100] <- 11
+  LimFact[IceList[[i]][]==100] <- c(length(EnvVarUse)+1)
   # Make the rastr cathegorical
   LimFactFct <- ratify(LimFact)
   # add a attribute table to the raster
-  rat <- data.frame(ID=1:11,
+  rat <- data.frame(ID=1:c(length(EnvVarUse)+1),
                     Env = c(paste0(EnvVarUse,": ",as.numeric(Prop),"%"),"Ice"),
-                    code = 1:11)
+                    code = 1:c(length(EnvVarUse)+1))
   levels(LimFactFct) <- rat
   # define the colors
-  rat$Col <- c("#ff7f00", "#fdbf6f", "#33a02c", "#a6cee3", "#fb9a99", "#6a3d9a", "#e31a1c", "#b2df8a", "#1f78b4", "#cab2d6","darkgrey")
+  rat$Col <- c(ColUse,"Grey")
   # plot the raster using a trellis plot
   print(rasterVis::levelplot(LimFactFct,
                              main = paste0(gsub("BP.","",names(IceList)[i]),"0 yrs-BP"),
@@ -335,4 +409,3 @@ for (i in 1:length(LimFact10)){#i<-1
                              cex=0.6))
 }
 dev.off()
-

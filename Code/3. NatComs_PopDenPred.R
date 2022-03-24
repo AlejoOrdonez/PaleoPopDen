@@ -4,8 +4,9 @@
 ####################################################################################
 rm(list = ls());gc()
 require(raster)
-
-# Load Enviormnetal Predictors - Each List slot is a Year
+require(qgam)
+require(MASS)
+# Load Environmental Predictors - Each List slot is a Year
 EnvVarUseList <- readRDS("~/Dropbox/Aarhus Assistant Professor/Projects/4. PopulationDensity-LGMtoNow/Data/Paleo Predictors/EU-Lorents dowscale/EnvVarUse.RData")
 #EnvVarUseList <- readRDS("./Data/Paleo_Predictors/EnvVarUse.RData")
 
@@ -72,7 +73,7 @@ PaleoPopDenEst90 <- lapply(EnvVarUseList, function(x){
 # Save the Env vars into an R RDS file
 saveRDS(PaleoPopDenEst90, file="~/Dropbox/Aarhus Assistant Professor/Projects/4. PopulationDensity-LGMtoNow/Results/90Percent/PaleoPopDenEst90.RData")
 #saveRDS(PaleoPopDenEst90, file="./Results/PaleoPopDenEst90.RData")
-rm(list = c("CrosValMod90", "PaleoPopDenEst90");gc()
+rm(list = c("CrosValMod90", "PaleoPopDenEst90"));gc()
 
 # Estimate population density using 10-percentile model
 # Load Models - Each List slot is a repetition
@@ -100,4 +101,4 @@ PaleoPopDenEst10 <- lapply(EnvVarUseList, function(x){
 # Save the Env vars into an R RDS file
 saveRDS(PaleoPopDenEst10, file="~/Dropbox/Aarhus Assistant Professor/Projects/4. PopulationDensity-LGMtoNow/Results/10Percent/PaleoPopDenEst10.RData")
 #saveRDS(PaleoPopDenEst10, file="./Results/PaleoPopDenEst10.RData")
-rm(list = c("CrosValMod10", "PaleoPopDenEst10");gc()
+rm(list = c("CrosValMod10", "PaleoPopDenEst10"));gc()
