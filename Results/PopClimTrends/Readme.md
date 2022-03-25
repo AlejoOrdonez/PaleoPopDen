@@ -1,0 +1,1 @@
+The folder shows the visualization of the predicted and proxy trends in population density as well as trends in evaluated environmental predictors. Ploted values represent the observed vakuaes in ares *NOT* covered by Ice at a the evluated point in time.
