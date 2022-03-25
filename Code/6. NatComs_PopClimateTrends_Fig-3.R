@@ -74,19 +74,19 @@ lines(x= PopDen$time,
 
 # plot Schmidt_et_al_2021 Core area Population desnisty
 points(x=Schmidt$Time,
-	   y= scales::rescale(Schmidt$PopDenMEAN,to=c(1,1.4), from=range(Schmidt[-1])),
+	   y= scales::rescale(Schmidt$PopDenMEAN,to=c(0.9,1.4), from=range(Schmidt[-1])),
        pch=19,col="blue",
        xlim = c(-22,-8),
       ylim = c(-1,0.5),type="b")
 polygon(x = c(Schmidt$Time,rev(Schmidt$Time)),
-        y = c(scales::rescale(Schmidt$PopDenLOW,to=c(1,1.4), from=range(Schmidt[-1])), rev(scales::rescale(Schmidt$PopDenHIGH,to=c(1,1.4),from=range(Schmidt[-1])))),
+        y = c(scales::rescale(Schmidt$PopDenLOW,to=c(0.9,1.4), from=range(Schmidt[-1])), rev(scales::rescale(Schmidt$PopDenHIGH,to=c(0.9,1.4),from=range(Schmidt[-1])))),
         col = rgb(0,0,1,0.6), border = "blue")
 #Add the axis and legend
 axis(2,
-	 at = scales::rescale(c(0,0.2,0.4),to=c(1,1.4), from=range(Schmidt[-1])),
+	 at = scales::rescale(c(0,0.2,0.4),to=c(0.9,1.4), from=range(Schmidt[-1])),
 	labels = c(0,0.2,0.4),
 	col="blue",las=2,line=-2.5,col.axis="blue")
-text(x=-20.4, y = scales::rescale(0.2,to=c(1,1.4), from=range(Schmidt[-1])),
+text(x=-20.4, y = scales::rescale(0.2,to=c(0.9,1.4), from=range(Schmidt[-1])),
 	 labels = "Core area\npopulationsize estimates\n [#people/100km2]",
 	 srt=90,adj = 0.5,
 	 xpd=NA,
@@ -94,15 +94,15 @@ text(x=-20.4, y = scales::rescale(0.2,to=c(1,1.4), from=range(Schmidt[-1])),
 
 ## PLot INQUA Number of radio carbon dates dbs
 points(x=Summ[4:dim(Summ)[1],1],
-     y=scales::rescale(Summ[4: dim(Summ)[1],2],to=c(0.5,1.5)),
+     y=scales::rescale(Summ[4: dim(Summ)[1],2],to=c(0.6,1.1)),
      pch=19, col="red",
      type="b")
 #Add the axis and legend
 axis(4,
-	 at = scales::rescale(c(250,500,750,1000),to=c(0.5,1.5),from=range(Summ[4: dim(Summ)[1],2])),
+	 at = scales::rescale(c(0,250,500,750,1000),to=c(0.6,1.1),from=range(Summ[4: dim(Summ)[1],2])),
 	 labels = F,col="red",
-	 line=-6)
-text(x=-8.5, y = scales::rescale(625,to=c(0.5,1.5),from=range(Summ[4: dim(Summ)[1],2])),
+	 line=-8)
+text(x=-8.5, y = scales::rescale(500,to=c(0.6,1.1),from=range(Summ[4: dim(Summ)[1],2])),
 	 labels = "Archeological Population proxy\n(Relative units)",
 	 srt=90,adj = 0.5,
 	 xpd=NA,
