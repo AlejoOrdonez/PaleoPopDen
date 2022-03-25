@@ -41,7 +41,7 @@ Summ <- data.frame( age = -1*as.numeric(names(Summ)),
 pdf("~/Dropbox/Aarhus Assistant Professor/Projects/4. PopulationDensity-LGMtoNow/Results/PopClimTrends/Fig_3.pdf",
     width=6,height=10)
 #dev.new(width=6,height=10)
-par(oma=rep(1,4),mar=c(3,4,1,1))
+par(oma=rep(1,4),mar=c(4,4,1,1))
 layout(rbind(matrix(1,3,3,byrow=T),matrix(2:10,3,3,byrow=T)))
 
 ### PLot the mean estimated Density
