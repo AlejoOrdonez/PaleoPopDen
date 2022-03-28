@@ -26,8 +26,9 @@ VarName <- c("Effective Temperature",
 # Laod the Paleo data
 PaleoData <- readRDS("~/Dropbox/Aarhus Assistant Professor/Projects/4. PopulationDensity-LGMtoNow/Data/Paleo Predictors/EU-Lorents dowscale/EnvVarUse.RData")
 
-#dev.new(width=7.5,height=9)
-pdf("~/Dropbox/Aarhus Assistant Professor/Projects/4. PopulationDensity-LGMtoNow/Results/ClimateHistograms/ClimHist.pdf",width=10,height=10)
+#dev.new(width=12,height=9)
+pdf("~/Dropbox/Aarhus Assistant Professor/Projects/4. PopulationDensity-LGMtoNow/Results/ClimateHistograms/ClimHist.pdf", width=12,height=9)
+par(mar=c(4,5,3,3), mfrow=c(3,4),oma=c(0.5,0.5,1.5,0.5))
 
 for (Var.Use in VarOrder){#(Var.Use <- "ET")
 # Current Density
@@ -53,9 +54,11 @@ for (Var.Use in VarOrder){#(Var.Use <- "ET")
 
 	## plot the density
 	plot(Binford.d,
-	     main= VarName[which(EnvVarUse%in%Var.Use)],
+
+	     main=NA,
 	     cex.main = 1.8,
 	     cex.axis = 1.5,
+	     #line.main = 2,
 	     las = 1,
 	     xlab=NA, ylab = NA,
 	     xlim = range(c(sapply(LGM.d,function(x){min(x$x)}),
@@ -63,7 +66,7 @@ for (Var.Use in VarOrder){#(Var.Use <- "ET")
 	                    range(Binford.d$x))),
 	     ylim = c(0,1),
 	     col="grey")
-	
+	mtext(VarName[which(EnvVarUse%in%Var.Use)], cex= 1.3, line=0.8, font=2)
 		for(i in 1:length(LGM.d)){
 		polygon(LGM.d[[i]],
 				col = hcl.colors(length(LGM.d), palette = "viridis", alpha = 0.4)[i],
@@ -77,16 +80,13 @@ for (Var.Use in VarOrder){#(Var.Use <- "ET")
 		  side=2,cex=1.1,
 		  line = 3.5)	
 }
-plot.new()
-plot.window(xlim=c(0,1),ylim=c(0,1))
-legend("bottomleft",
-	ncol=2,
+legend("topright",
+		inset=c(-1,0),
 	fill= c("grey","#4B0055","#007094","#00BE7D","#FDE333"),
 	legend=c("Current", "G. Stadial 2",
 	                     "G. Interstadial 1",
 	                     "G. Stadial 1",
 	                     "Holocene"),
 	xpd=NA,
-	bty="n",cex=1.5,
-	inset = c(0,-0.55))
+	bty="n",cex=1.5)
 dev.off()
