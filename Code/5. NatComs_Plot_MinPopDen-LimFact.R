@@ -187,7 +187,7 @@ IceList <- readRDS(file = "~/Dropbox/Aarhus Assistant Professor/Projects/4. Popu
 LimFact50 <- readRDS("~/Dropbox/Aarhus Assistant Professor/Projects/4. PopulationDensity-LGMtoNow/Results/50Percent/LimFact50.RData")
 
 
-pdf("~/Dropbox/Aarhus Assistant Professor/Projects/4. PopulationDensity-LGMtoNow/Results/LimFact/LimFact50Ver1.PDF",)
+pdf("~/Dropbox/Aarhus Assistant Professor/Projects/4. PopulationDensity-LGMtoNow/Results/LimFact/LimFact50Ver1.PDF")
 for (i in 1:length(LimFact50)){#i<-1
   # Name of the period to use
   PerUse <- names(IceList)[i]
