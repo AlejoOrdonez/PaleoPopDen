@@ -144,7 +144,21 @@ text(x=-0.15,y=1,
      xpd=NA)
 ### Plot the trends
 par(mar=c(4,4,4,4))
+EnvVarUse <- c("ET", "PET","NPP",
+               "MCM",#"MWM",
+               "TS",
+               "Log10.TAP",
+               "Log10.PDM", "Log10.PWM",
+               "PS"
+)
 plot.new()
+EnvVarUse <- c("ET", "PET","NPP",
+               "MCM",#"MWM",
+               "TS",
+               "Log10.TAP",
+               "Log10.PDM", "Log10.PWM",
+               "PS"
+)
 plot.window(xlim = c(-22,-7),
             ylim = round(range(PopDenSumm[,-1]) + c(-0.5,0.5)))
 axis(1,
