@@ -1,22 +1,29 @@
+# Get the estimates of the Mean Population size
 rm(list=ls());gc()
 require(raster)
 require(mgcv)
+# Load Ice Layers from ICE-6G-C
+IceList <- readRDS(file = "~/Dropbox/Aarhus Assistant Professor/Projects/4. PopulationDensity-LGMtoNow/Data/IceMaps/ICE-6G-C/Ice0_5DD.RData")
 
-###############################################################################################
-###     Plot changes in Mean Population size (predicted and based on two paleo porxies).    ###
-###############################################################################################
-
-# Get the estimates of the Mean Population size
-PopDenFinalRast <- readRDS('~/Dropbox/Aarhus Assistant Professor/Projects/4. PopulationDensity-LGMtoNow/Results/50Percent/MinPopPopDen50.RData')
+PaleoPopDenEst50 <- readRDS("~/Dropbox/Aarhus Assistant Professor/Projects/4. PopulationDensity-LGMtoNow/Results/50Percent/PaleoPopDenEst50.RData")
+## Estimat6e the Min PopDensity
+PopDenFinalRast <- lapply(names(PaleoPopDenEst50), function(y){
+  PopDen <- PaleoPopDenEst50[[y]] # Load pop density estimates
+  # Remove MWM -  Might not be necessary latter on
+  if(sum(names(PopDen)%in%"MWM")!=0){
+    PopDen <- PopDen[[-which(names(PopDen)%in%"MWM")]]}
+  Ice <- IceList[[y]]==0 # load Ice sheets
+  PopDenCrop <- PopDen*Ice
+  PopDenCrop[is.infinite(PopDenCrop[])] <- NA
+  # calculate the Mim Popultion size the Limming factor Variable
+  calc(PopDenCrop,function(x){min(x)})
+})
 PopDenFinalList <- lapply(PopDenFinalRast,function(x){
-						mean(x[],na.rm=T)})
+  mean(x[],na.rm=T)})
 PopDen <- data.frame(density = do.call("rbind", PopDenFinalList),
                      time = seq(-21,-8,by=0.500))
 
-#PopDen$time <- abs(PopDen$time)
-#plot(PopDen[,2:1],type="b")
-
-# Estimate the smoothed trend in change in population desity over time.
+# Estimate the smoothed trend in change in population density over time.
 fit50 <- gam(density~s(time),
              data = PopDen)
 PopDen$mean <- predict(fit50)
@@ -31,7 +38,7 @@ Schmidt <- cbind(Time = round(apply(Schmidt[1:5,1:2],1,mean)/-1000,2),Schmidt [1
 #pnas <- read.csv("~/Dropbox/Aarhus Assistant Professor/Projects/4. PopulationDensity-LGMtoNow/Data/Baseline - Proxy/pnas.1503784112.sd03.csv")
 # Summ <- table(round(pnas$X14C_age/1000))
 # Summ <- data.frame( age = -11:-27,
-                    # Sum = as.numeric(Summ))
+# Sum = as.numeric(Summ))
 
 INQUA <- read.csv("~/Dropbox/Aarhus Assistant Professor/Projects/4. PopulationDensity-LGMtoNow/Data/Baseline - Proxy/InquaData_V28.csv")
 Summ <- table(round(INQUA$X14C_age/1000))
@@ -40,9 +47,6 @@ Summ <- data.frame( age = -1*as.numeric(names(Summ)),
                     Sum = as.numeric(Summ))
 
 
-
-#pdf("~/Dropbox/Aarhus Assistant Professor/Projects/4. PopulationDensity-LGMtoNow/Results/PopClimTrends/Fig_3.pdf",
-#    width=6,height=10)
 pdf("~/Desktop/Fig_3.pdf",
     width=6,height=10)
 #dev.new(width=6,height=10)
@@ -61,8 +65,8 @@ plot(density ~ time,data = PopDen,
      xpd=NA)
 # Add Axes and legends
 axis(1,
-	 at=seq(-22,-7,by=3),
-	 labels = paste0(seq(-22,-7,by=3)*-1,"kaBP"))
+     at=seq(-22,-7,by=3),
+     labels = paste0(seq(-22,-7,by=3)*-1,"kaBP"))
 axis(2,las=2)
 mtext("Mean density [#people/100km2]",side=2,cex=1.2,line=2.5)
 
@@ -114,39 +118,41 @@ text(x = -10.65,
 
 # plot Schmidt_et_al_2021 Core area Population desnisty
 points(x=Schmidt$Time,
-	   y= scales::rescale(Schmidt$PopDenMEAN,to=c(0.9,1.4), from=range(Schmidt[-1])),
+       y= scales::rescale(Schmidt$PopDenMEAN,to=c(1.3,1.8), from=range(Schmidt[-1])),
        pch=19,col="blue",
        xlim = c(-22,-8),
-      ylim = c(-1,0.5),type="b")
+       ylim = c(-1,0.5),type="b")
 polygon(x = c(Schmidt$Time,rev(Schmidt$Time)),
-        y = c(scales::rescale(Schmidt$PopDenLOW,to=c(0.9,1.4), from=range(Schmidt[-1])), rev(scales::rescale(Schmidt$PopDenHIGH,to=c(0.9,1.4),from=range(Schmidt[-1])))),
+        y = c(scales::rescale(Schmidt$PopDenLOW,to=c(1.3,1.8), from=range(Schmidt[-1])), rev(scales::rescale(Schmidt$PopDenHIGH,to=c(1.3,1.8),from=range(Schmidt[-1])))),
         col = rgb(0,0,1,0.6), border = "blue")
 #Add the axis and legend
 axis(2,
-	 at = scales::rescale(c(0,0.2,0.4),to=c(0.9,1.4), from=range(Schmidt[-1])),
-	labels = c(0,0.2,0.4),
-	col="blue",las=2,line=-2.5,col.axis="blue")
-text(x=-20.4, y = scales::rescale(0.2,to=c(0.9,1.4), from=range(Schmidt[-1])),
-	 labels = "Core area\npopulationsize estimates\n [#people/100km2]",
-	 srt=90,adj = 0.5,
-	 xpd=NA,
-	 col="blue")
+     at = scales::rescale(c(0,0.2,0.4),to=c(1.3,1.8), from=range(Schmidt[-1])),
+     labels = c(0,0.2,0.4),
+     col="blue",las=2,line=-2.5,col.axis="blue")
+text(x=-20.4, y = scales::rescale(0.2,to=c(1.3,1.8), from=range(Schmidt[-1])),
+     labels = "Core area\npopulationsize estimates\n [#people/100km2]",
+     srt=90,adj = 0.5,
+     xpd=NA,
+     col="blue")
 
 ## PLot INQUA Number of radio carbon dates dbs
-points(x=Summ[4:dim(Summ)[1],1],
-     y=scales::rescale(Summ[4: dim(Summ)[1],2],to=c(0.6,1.1)),
-     pch=19, col="red",
-     type="b")
+points(x = Summ[4:dim(Summ)[1],1],
+       y = scales::rescale(Summ[4: dim(Summ)[1],2],to=c(0.5,1.1)),
+       ylim = scales::rescale(c(0,1000),to=c(0.5,1.1)),
+       pch = 19, col = "red",
+       type = "b")
 #Add the axis and legend
 axis(4,
-	 at = scales::rescale(c(0,250,500,750,1000),to=c(0.6,1.1),from=range(Summ[4: dim(Summ)[1],2])),
-	 labels = F,col="red",
-	 line=-8)
-text(x=-8.5, y = scales::rescale(500,to=c(0.6,1.1),from=range(Summ[4: dim(Summ)[1],2])),
-	 labels = "Archeological Population proxy\n(Relative units)",
-	 srt=90,adj = 0.5,
-	 xpd=NA,
-	 col="red")
+     at = scales::rescale(c(0,250,500,750,1000),to=c(0.5,1.1)),
+     labels = F,col="red",
+     line=-8,
+     xpd=NA)
+text(x=-8.5, y = mean(c(0.5,1.1)),
+     labels = "Archeological Population proxy\n(Relative units)",
+     srt=90,adj = 0.5,
+     xpd=NA,
+     col="red")
 	 
 ###############################################################################################
 ### 				    Plot changes in key Enviormnegtal variables    						###
@@ -201,8 +207,8 @@ for (Var in EnvVarUse){#(Var <- "ET")
 				function(x){
 					EnvRast <- PaleoClimRst[[x]][[match(Var,EnvVarUse)]] # Env raster
 					IceRast <- IceList[[x]]==0 # Ice Rast The operation make the Ice loction Zero
-					EnvRast <- EnvRast/IceRast
-					EnvRast[is.infinite(EnvRast[])] <- NA
+					EnvRast <- EnvRast#/IceRast
+					#EnvRast[is.infinite(EnvRast[])] <- NA
 					mean(EnvRast[],na.rm=T)})
 	VarSumm <- data.frame(Time = rev(seq(8,21,by=0.5))*-1,
 	                      Var = do.call("c", VarTbl))

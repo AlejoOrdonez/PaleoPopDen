@@ -72,6 +72,7 @@ for (Var.Use in EnvVarUse){#(Var.Use <- "ET")
   if(Var.Use %in% c("ET","NPP","MWM","Log10.TAP","Log10.PWM")){
   mtext(expression("people per 100"~km^2),
         side=2,
+        cex=0.8,
         line=2.8)
     axis(2,
          at = -1:3,

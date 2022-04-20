@@ -98,7 +98,7 @@ for (Var.Use in VarOrder){#(Var.Use <- "ET")
 # y-axis label
 	if(which(VarOrder%in%Var.Use)%%2==1){
 	mtext("Density",
-	      side=2,cex=1,
+	      side=2,cex=0.6,
 	      line = 3)	}
 # panel label
 		plot.window(xlim=c(0,1),y=c(0,1))
