@@ -114,7 +114,7 @@ EnvVarUse <- c("ET",#ff7f00
 
 pdf("~/Desktop/Fig_6.pdf", width = 8, height = 10)
 ### Plot the Barplots
-par(mar=c(1,4,1,4),mfrow=c(2,1),oma=c(0,0,0,5))
+par(mar=c(1,4,1,4),mfrow=c(2,1),oma=c(4,1,0,6))
 # Build teh final summary for the tables
 LimFact50Tbl <- do.call("rbind",LimFact50Lst)
 row.names(LimFact50Tbl) <- LimFact50Tbl[,1]
@@ -124,33 +124,27 @@ a<-barplot(as.matrix(t(LimFact50Tbl[,-1][,order(apply(LimFact50Tbl[,-1],2,mean))
            col=ColUse[order(apply(LimFact50Tbl[,-1],2,mean))],
            axes=F,
            names.arg = rep(NA,27))
+BoxLim <- par()$usr
 # add the y axis
 axis(2,las=2)
-mtext("Proportion (%)",side=2,line=2.5,cex=1,font=2)
+mtext("Proportion (%) of ice-free regions in Europe\nwhere the variable is a limiting factor",side=2,line=2.5,cex=1,font=2)
 # add the x axis
 axis(1,at=a,labels = NA)
-text(x=a-0.7,
-     y=rep(-6,length(a)),
-     labels = sprintf("%.2f",as.numeric(gsub("BP.","",names(IceList)))/100),
-     xpd=NA,
-     srt=45,
-     pos=1)
-mtext("Thosands of Years Before Preent (kaBP)",
-      side=1,line=3,cex=1,font=2)
+# text(x=a-0.7,
+#      y=rep(-6,length(a)),
+#      labels = sprintf("%.1f",as.numeric(gsub("BP.","",names(IceList)))/100),
+#      xpd=NA,
+#      srt=45,
+#      pos=1)
+# mtext("Thosands of Years Before Prsent (kaBP)",
+#       side=1,line=3,cex=1,font=2)
 plot.window(xlim=c(0,1),ylim=c(0,1))
 text(x=-0.15,y=1,
      labels = "A)",
      font=2,
      xpd=NA)
 ### Plot the trends
-par(mar=c(4,4,4,4))
-EnvVarUse <- c("ET", "PET","NPP",
-               "MCM",#"MWM",
-               "TS",
-               "Log10.TAP",
-               "Log10.PDM", "Log10.PWM",
-               "PS"
-)
+#par(mar=c(4,4,4,4))
 plot.new()
 EnvVarUse <- c("ET", "PET","NPP",
                "MCM",#"MWM",
@@ -159,24 +153,24 @@ EnvVarUse <- c("ET", "PET","NPP",
                "Log10.PDM", "Log10.PWM",
                "PS"
 )
-plot.window(xlim = c(-22,-7),
+plot.window(xlim = range(a)+c(-0.6,0.6),#c(-22,-7),
             ylim = round(range(PopDenSumm[,-1]) + c(-0.5,0.5)))
 axis(1,
-     at = seq(-21,-8,by=1),
+     at = a,#seq(-21,-8,by=1),
      labels = NA)
-mtext("Thosands of Years Before Preent (kaBP)",
+mtext("Thosands of Years Before Present (kaBP)",
       side=1,line=3,cex=1,font=2)
 axis(2,
      las = 2,
      xpd = NA)
-mtext("Popultion density estimate",
+mtext(expression(bold("People per 100"~km^2)),
       side = 2,
       line = 2,
       font=2)
 
 for(VarUse  in EnvVarUse){#(VarUse<-"NPP")
   PopDen <- data.frame(density = PopDenSumm[,VarUse],
-                       time = PopDenSumm[,1])
+                       time = a)
   # Estimate the smoothed trend in change in population density over time.
   fit50 <- gam(density~s(time),
                data = PopDen)
@@ -191,15 +185,15 @@ for(VarUse  in EnvVarUse){#(VarUse<-"NPP")
           border=NA)
 }
 
-plot.window(xlim=c(-22,-7),ylim=c(0,1))
-text(x = seq(-21,-8,by=1),
-     y = rep(-0.15,3),
+plot.window(xlim=range(a)+c(-0.6,0.6),ylim=c(0,1))
+text(x = a,#seq(-21,-8,by=1),
+     y = rep(-0.12,length(a)),
      cex=0.8,
-     labels = paste0(seq(-22,-7,by=3)*-1,"kaBP"),
+     labels = sprintf("%.1f",as.numeric(gsub("BP.","",names(IceList)))/100),#sprintf("%.1f",seq(-21,-8,by=1)*-1),
      srt=45,
      xpd=NA)
 
-# Add the legebd
+# Add the legend
 VarName <- c("Effective Temperature",
              "Potential Evapotraspiration",
              "Net Primary Productivity",
@@ -213,7 +207,7 @@ VarName <- c("Effective Temperature",
 legend("topright",
        legend=VarName,#gsub("Log10.","",EnvVarUse),
        fill=ColUse,
-       inset=c(-0.32,0),
+       inset=c(-0.4,0),
        xpd=NA,
        cex=0.9,
        bty="n")

@@ -4,21 +4,20 @@
 rm(list=ls());gc()
 require(raster)
 require(mgcv)
-
-
+require(rnaturalearth)
+require(rnaturalearthdata)
+require(latticeExtra)
+world <- ne_countries(scale = "medium", returnclass = "sf")
+Europe <- world[which(world$continent == "Europe"),]
 # Get the estimates of the Mean Population size
 PopDenFinalRast <- readRDS('~/Dropbox/Aarhus Assistant Professor/Projects/4. PopulationDensity-LGMtoNow/Results/50Percent/MinPopPopDen50.RData')
 
 PopDenMap <- stack(PopDenFinalRast[[1]],
-                   mean(do.call("stack",lapply(14:17,function(x){PopDenFinalRast[[x]]}))),
-                   mean(do.call("stack",lapply(17:19,function(x){PopDenFinalRast[[x]]}))),
-                   mean(do.call("stack",lapply(20:23,function(x){PopDenFinalRast[[x]]}))),
-                   mean(do.call("stack",lapply(23:27,function(x){PopDenFinalRast[[x]]}))))
-names(PopDenMap) <- c("Greenland Stadial 2",
-                      "Greenland Interstadial 1",
-                      "Greenland Stadial 1",
-                      "Holocene initiation",
-                      "Mid-Holocene")
+                   mean(do.call("stack",lapply(14:17,function(x){PopDenFinalRast[[x]]})),na.rm=T),
+                   mean(do.call("stack",lapply(17:19,function(x){PopDenFinalRast[[x]]})),na.rm=T),
+                   mean(do.call("stack",lapply(20:23,function(x){PopDenFinalRast[[x]]})),na.rm=T),
+                   mean(do.call("stack",lapply(23:27,function(x){PopDenFinalRast[[x]]})),na.rm=T))
+
 # Load Ice Layers from ICE-6G-C
 IceList <- readRDS(file = "~/Dropbox/Aarhus Assistant Professor/Projects/4. PopulationDensity-LGMtoNow/Data/IceMaps/ICE-6G-C/Ice0_5DD.RData")
 IceList <- stack(IceList[[1]],
@@ -29,8 +28,15 @@ IceList <- stack(IceList[[1]],
 pdf("~/Desktop/Fig_4.pdf",width=9,height = 9)                
 print(rasterVis::levelplot(PopDenMap,
                      margin=F,
+                     main=list(bold(expression("People per 100"~km^2)),side=1,line=-0.5),
+                     names.attr = c("Greenland Stadial 2",
+                                    "Greenland Interstadial 1",
+                                    "Greenland Stadial 1",
+                                    "Holocene initiation",
+                                    "Early Holocene"),
                      col.regions = rev(hcl.colors(100, palette = "RdYlBu"))) + 
-  rasterVis::levelplot(IceList, col.regions =c(NA,"grey"),add=T, title="NA"))
+  rasterVis::levelplot(IceList, col.regions =c(NA,"grey"),add=T, title="NA") + 
+    layer(sp.polygons(as(Europe[,"adm0_dif"],Class = "Spatial"), lwd=1)))
 dev.off()
 
 ###############################################################################################
@@ -66,6 +72,8 @@ IceList <- readRDS(file = "~/Dropbox/Aarhus Assistant Professor/Projects/4. Popu
 
 # Get the estimates of the Mean Population size
 LimFact50 <- readRDS("~/Dropbox/Aarhus Assistant Professor/Projects/4. PopulationDensity-LGMtoNow/Results/50Percent/LimFact50.RData")
+world <- ne_countries(scale = "medium", returnclass = "sf")
+Europe <- world[which(world$continent == "Europe"),]
 
 rat <- data.frame(ID=1:c(length(EnvVarUse)+1),
                   Env = c(EnvVarUse,"Ice"),
@@ -80,13 +88,16 @@ for (i in c(1,14,17,20,27)){#i<-1
   if(i==1){LimFact50Map <- LimFact}
   else{LimFact50Map <- stack(LimFact50Map,LimFact)}
 }
-names(LimFact50Map) <- c("Greenland Stadial 2",
-                         "Greenland Interstadial 1",
-                         "Greenland Stadial 1",
-                         "Holocene initiation",
-                         "Mid-Holocene")
+
 pdf("~/Desktop/Fig_5.pdf",width=9,height = 9)    
 print(rasterVis::levelplot(LimFact50Map,
                            margin=F,
-                           col.regions = c(ColUse,"Grey")))
+                           col.regions = c(ColUse,"Grey"),
+                           main=list("Limiting factor",line=-0.5),
+                          names.attr = c("Greenland Stadial 2",
+                                         "Greenland Interstadial 1",
+                                         "Greenland Stadial 1",
+                                         "Holocene initiation",
+                                         "Early Holocene")) +
+  layer(sp.polygons(as(Europe[,"adm0_dif"],Class = "Spatial"), lwd=1)))
 dev.off()

@@ -26,16 +26,18 @@ EnvVarName <- c("Effective Temperature",
                 "Mean Temperture Warmest Month",
                 "Temperture Sesonality",
                 "Total Annual Precipitation",
-                "Precip. Dryiest Month",
+                "Precip. Driest Month",
                 "Precip. Wettest Month",
                 "Precip. Sesonality")
+expression(EnvVarName~mm/year)
+
 UnitsUse <- c("°C",
-              "mm per Yr",
+              "mm per year",
               "gC per m^2 per year",
               "°C",
               "°C",
               "°C",
-              "mm per yr",
+              "mm per year",
               "mm per month",
               "mm per month",
               "mm per month")
@@ -60,7 +62,6 @@ for (Var.Use in EnvVarUse){#(Var.Use <- "ET")
                 qu = 0.10)
   
   # Plot the relation of between a predictor a Population data
-  
   plot(log10(density)~ Var,data = BinfordNewtmp,
        pch = 19,
        xlab = paste0(EnvVarName[EnvVarUse%in%Var.Use],"\n[",UnitsUse[EnvVarUse%in%Var.Use],"]"),
@@ -70,10 +71,10 @@ for (Var.Use in EnvVarUse){#(Var.Use <- "ET")
        ylab = NA,
        xpd=NA)
   if(Var.Use %in% c("ET","NPP","MWM","Log10.TAP","Log10.PWM")){
-  mtext(expression("people per 100"~km^2),
-        side=2,
-        cex=0.8,
-        line=2.8)
+  # mtext(expression("People per 100"~km^2),
+  #       side=2,
+  #       cex=0.8,
+  #       line=2.8)
     axis(2,
          at = -1:3,
          labels = 10^c(-1:3),
@@ -140,4 +141,10 @@ text(x = 0.05,
      labels = paste0(LETTERS[which(EnvVarUse%in%Var.Use)],")"),
      xpd =NA)
 }
+mtext(expression("People per 100"~km^2),
+      side=2,
+      cex=1.2,
+      line=2,
+      outer=T)
+
 dev.off()
