@@ -27,7 +27,7 @@ for(Yr.Use in seq(-2100,-800,by=50)){#(Yr.Use <- -2100) # 500 yrs increments
 	                     width = 50,   # Progress bar width. Defaults to getOption("width")
 	                     char = "=")   # Character used to create the bar
 # These are 100 year averages centered on the year of reference
-	EnvVarRast <- lapply(EnvVarUse, function(x){#(x<-"TAP")
+	EnvVarRast <- lapply(EnvVarUse, function(x){#(x<-"PWM")
 # Sets the progress bar to the current state
 					 setTxtProgressBar(pb, which(EnvVarUse%in%x)) 
 # Define the time period to average (50 yr before and 50Yr after the central time period)
