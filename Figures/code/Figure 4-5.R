@@ -25,16 +25,22 @@ IceList <- stack(IceList[[1]],
                  IceList[[17]],
                  IceList[[20]],
                  IceList[[24]])
-pdf("~/Desktop/Fig_4.pdf",width=9,height = 9)                
-print(rasterVis::levelplot(PopDenMap,
+pdf("~/Desktop/Fig_4.pdf",width=7,height = 7)                
+#dev.new()
+print(
+  rasterVis::levelplot(PopDenMap,
                      margin=F,
-                     main=list(bold(expression("People per 100"~km^2)),side=1,line=-0.5),
+                     main=list(expression(bold("People per 100"~km^2)),side=1,line=-0.5),
                      names.attr = c("Greenland Stadial 2",
                                     "Greenland Interstadial 1",
                                     "Greenland Stadial 1",
                                     "Holocene initiation",
                                     "Early Holocene"),
-                     col.regions = rev(hcl.colors(100, palette = "RdYlBu"))) + 
+                     par.strip.text= list(cex=0.8, line=0.5),
+                     col.regions = rev(hcl.colors(100, palette = "RdYlBu")),
+                     colorkey=list(at=seq(0,4.5,length.out=101),
+                                   labels = list(at = seq(0,4.5,by=0.5)),
+                                   col=rev(hcl.colors(100, palette = "RdYlBu")))) + 
   rasterVis::levelplot(IceList, col.regions =c(NA,"grey"),add=T, title="NA") + 
     layer(sp.polygons(as(Europe[,"adm0_dif"],Class = "Spatial"), lwd=1)))
 dev.off()
@@ -57,13 +63,13 @@ EnvVarUse <- c("ET",#ff7f00
                "PS")#cab2d6
 
 ColUse <- c("#ff7f00",#"ET"
-            "#fdbf6f",#"PET"
-            "#33a02c",#"NPP",
+            "#fee090",#"PET"
+            "#313695",#"NPP","#33a02c"
             "#a6cee3",#"MCM"
             #           "#fb9a99",#"MWM"
             "#6a3d9a",#"TS"
             "#e31a1c",#"TAP", 
-            "#b2df8a",#"PDM",
+            "#8dd3c7",#"PDM", "#fee090"
             "#1f78b4",#"PWM",
             "#cab2d6")#"PS"
 
@@ -89,7 +95,7 @@ for (i in c(1,14,17,20,27)){#i<-1
   else{LimFact50Map <- stack(LimFact50Map,LimFact)}
 }
 
-pdf("~/Desktop/Fig_5.pdf",width=9,height = 9)    
+pdf("~/Desktop/Fig_5.pdf",width=7,height = 7)    
 print(rasterVis::levelplot(LimFact50Map,
                            margin=F,
                            col.regions = c(ColUse,"Grey"),
@@ -98,6 +104,7 @@ print(rasterVis::levelplot(LimFact50Map,
                                          "Greenland Interstadial 1",
                                          "Greenland Stadial 1",
                                          "Holocene initiation",
-                                         "Early Holocene")) +
+                                         "Early Holocene"),
+                          par.strip.text= list(cex=0.8)) +
   layer(sp.polygons(as(Europe[,"adm0_dif"],Class = "Spatial"), lwd=1)))
 dev.off()

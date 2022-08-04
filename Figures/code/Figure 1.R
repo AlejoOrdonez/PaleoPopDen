@@ -9,7 +9,6 @@ require(mgcv)
 #Binford_EnvDta_WorldClim <-read.csv("https://raw.githubusercontent.com/AlejoOrdonez/PaleoPopDen/main/Data/BindfordData/BinfordNewEnvDta_WorldClim.csv")
 Binford_EnvDta_WorldClim <-read.csv("~/Dropbox/Aarhus Assistant Professor/Projects/4. PopulationDensity-LGMtoNow/Data/Contemp Predictors/BinfordNewEnvDta_WorldClim.csv")
 
-
 # Define the variables names to use 
 EnvVarUse <- c("ET", "PET", #"MAT",
                "NPP",
@@ -23,12 +22,12 @@ EnvVarName <- c("Effective Temperature",
                 "Potential Evapotraspiration",
                 "Net Primary Productivity",
                 "Mean Temp Coldest Month",
-                "Mean Temperture Warmest Month",
-                "Temperture Sesonality",
+                "Mean Temp Warmest Month",
+                "Temperature Seasonality",
                 "Total Annual Precipitation",
                 "Precip. Driest Month",
                 "Precip. Wettest Month",
-                "Precip. Sesonality")
+                "Precip. Seasonality")
 expression(EnvVarName~mm/year)
 
 UnitsUse <- c("°C",
@@ -37,13 +36,13 @@ UnitsUse <- c("°C",
               "°C",
               "°C",
               "°C",
-              "mm per year",
-              "mm per month",
-              "mm per month",
-              "mm per month")
+              "Log10 mm per year",
+              "Log10 mm per month",
+              "Log10 mm per month]",
+              "No units")
 
-pdf("~/Desktop/Fig1.pdf",width=6,height=12)
-par(mfrow=c(5,2),mar=c(3,1,2,2),oma=c(2,4,0,0))
+pdf("~/Desktop/Fig_1.pdf",width=3.5,height=8)
+par(mfrow=c(5,2),mar=c(2.5,0.5,1.5,1),oma=c(0,4,0,0))
 for (Var.Use in EnvVarUse){#(Var.Use <- "ET")
   BinfordNewtmp <- Binford_EnvDta_WorldClim[,c("density", Var.Use)]
   names(BinfordNewtmp)[2]<-"Var"
@@ -64,12 +63,17 @@ for (Var.Use in EnvVarUse){#(Var.Use <- "ET")
   # Plot the relation of between a predictor a Population data
   plot(log10(density)~ Var,data = BinfordNewtmp,
        pch = 19,
-       xlab = paste0(EnvVarName[EnvVarUse%in%Var.Use],"\n[",UnitsUse[EnvVarUse%in%Var.Use],"]"),
+       cex=0.5,
+       xlab = NA, #paste0(EnvVarName[EnvVarUse%in%Var.Use],"\n[",UnitsUse[EnvVarUse%in%Var.Use],"]"),
        main =  NA,
+       cex.lab=0.8,
        cex.main = 1,
        axes = F,ylim = c(-1,3),
        ylab = NA,
        xpd=NA)
+  mtext(UnitsUse[EnvVarUse%in%Var.Use],1,line=1.2,cex=0.5)
+  mtext(EnvVarName[EnvVarUse%in%Var.Use],3,line=0.5,cex=0.6,font =2)
+  axis(1,labels = NA)
   if(Var.Use %in% c("ET","NPP","MWM","Log10.TAP","Log10.PWM")){
   # mtext(expression("People per 100"~km^2),
   #       side=2,
@@ -78,7 +82,7 @@ for (Var.Use in EnvVarUse){#(Var.Use <- "ET")
     axis(2,
          at = -1:3,
          labels = 10^c(-1:3),
-         las = 2)
+         las = 2,cex.axis=0.8)
   }
   else{
     axis(2,
@@ -88,7 +92,7 @@ for (Var.Use in EnvVarUse){#(Var.Use <- "ET")
     
   }
   box()
-  axis(1)
+  axis(1,cex.axis=0.6,line = -0.5 ,tick=F)
   Var.predict <- seq(min(BinfordNewtmp$Var),
                      max(BinfordNewtmp$Var),
                      length.out = 100)
@@ -99,7 +103,7 @@ for (Var.Use in EnvVarUse){#(Var.Use <- "ET")
                            se.fit = T) 
   lines(x = Var.predict,
         y = fit50.Predict$fit,
-        col = "red",lwd = 2)
+        col = "red",lwd = 1)
   lines(x = Var.predict,
         y = fit50.Predict$fit+(qnorm(0.975) * fit50.Predict$se.fit),
         col = "red",lwd = 1,lty=2)
@@ -112,7 +116,7 @@ for (Var.Use in EnvVarUse){#(Var.Use <- "ET")
                            se.fit = T) 
   lines(x = Var.predict,
         y = fit90.Predict$fit,
-        col = "blue",lwd = 2)
+        col = "blue",lwd = 1)
   lines(x = Var.predict,
         y = fit90.Predict$fit+(qnorm(0.975) * fit90.Predict$se.fit),
         col = "blue",lwd = 1,lty=2)
@@ -126,7 +130,7 @@ for (Var.Use in EnvVarUse){#(Var.Use <- "ET")
                            se.fit = T) 
   lines(x = Var.predict,
         y = fit10.Predict$fit,
-        col = "purple",lwd = 2)
+        col = "purple",lwd = 1)
   lines(x = Var.predict,
         y = fit10.Predict$fit+(qnorm(0.975) * fit10.Predict$se.fit),
         col = "purple",lwd = 1,lty=2)
@@ -134,16 +138,16 @@ for (Var.Use in EnvVarUse){#(Var.Use <- "ET")
         y = fit10.Predict$fit-(qnorm(0.975) * fit10.Predict$se.fit),
         col = "purple",lwd = 1,lty=2)
 plot.window(xlim=c(0,1),ylim=c(0,1))
-text(x = 0.05,
-     y = 0.98,
-     cex = 1.1,
+text(x = 0.02,
+     y = 0.95,
+     cex = 0.8,
      font = 2,
      labels = paste0(LETTERS[which(EnvVarUse%in%Var.Use)],")"),
      xpd =NA)
 }
 mtext(expression("People per 100"~km^2),
       side=2,
-      cex=1.2,
+      cex=0.8,
       line=2,
       outer=T)
 

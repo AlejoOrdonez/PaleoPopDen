@@ -14,13 +14,13 @@ VarOrder <- EnvVarUse
 VarName <- c("Effective Temperature",
              "Potential Evapotraspiration",
              "Net Primary Productivity",
-             "Mean temperature of the Coldest Month",
-             "Mean temperature of the Warmest Month",
+             "Mean Temp Coldest Month",
+             "Mean Temp Warmest Month",
              "Temperature Seasonality",
              "Total Annual Precipitation",
-             "Prec. Dryiest Month",
-             "Prec. Wettest Month",
-             "Precipitation Seasonality")
+             "Precip. Driest Month",
+             "Precip. Wettest Month",
+             "Precip. Seasonality")
 UnitsUse <- c("°C",
               "mm per Yr",
               "gC per m^2 per year",
@@ -37,8 +37,8 @@ PaleoData <- readRDS("~/Dropbox/Aarhus Assistant Professor/Projects/4. Populatio
 
 #dev.new(width=12,height=9)
 #pdf("~/Dropbox/Aarhus Assistant Professor/Projects/4. PopulationDensity-LGMtoNow/Results/ClimateHistograms/ClimHist.pdf", width=12,height=9)
-pdf("~/Desktop/Fig_2.pdf", width=5,height=10)
-par(mar=c(3,2,2,2), mfrow=c(5,2),oma=c(1,3,0,0))
+pdf("~/Desktop/Fig_2.pdf", width=3.5,height=8)
+par(mfrow=c(5,2), mar=c(2.5,0.5,1.5,1),oma=c(0,4,0,0))#mar=c(3,2,2,2), oma=c(1,3,0,0))
 
 for (Var.Use in VarOrder){#(Var.Use <- "ET")
 # Current Density
@@ -73,14 +73,24 @@ for (Var.Use in VarOrder){#(Var.Use <- "ET")
 	                    range(Binford.d$x))),
 	     ylim = c(0,1),
 	     col="grey",
-	     xpd=NA)
+	     xpd=NA,
+	     axes=F)
+	# Add the Axes
+	box()
+	axis(1,labels = NA)
+	axis(1,cex.axis=0.6,line = -0.5 ,tick=F)
+	if(Var.Use %in% c("ET","NPP","MWM","Log10.TAP","Log10.PWM")){
+	  axis(2,
+	       las = 2,cex.axis=0.8)
+	}
+	else{
+	  axis(2,
+	       labels = NA)
+	}
 # Add the units
-	   mtext(paste0(VarName[EnvVarUse%in%Var.Use],"\n[",UnitsUse[EnvVarUse%in%Var.Use],"]"),
-	         side = 1,
-	         cex=0.6,
-	         line = 3,
-	         xpd = NA)
-	  # 
+	mtext(UnitsUse[EnvVarUse%in%Var.Use],1,line=1.2,cex=0.5)
+	mtext(VarName[EnvVarUse%in%Var.Use],3,line=0.5,cex=0.6,font =2)
+	 # 
 		#plot the density plots
 		for(i in 1:length(LGM.d)){
 		polygon(LGM.d[[i]],
@@ -96,15 +106,18 @@ for (Var.Use in VarOrder){#(Var.Use <- "ET")
 	#       cex= 0.7,
 	#       line=0.8)
 # y-axis label
-	if(which(VarOrder%in%Var.Use)%%2==1){
-	mtext("Density",
-	      side=2,cex=0.6,
-	      line = 3)	}
+	# if(which(VarOrder%in%Var.Use)%%2==1){
+	# mtext("Density",
+	#       side=2,cex=0.6,
+	#       line = 3)	}
 # panel label
 		plot.window(xlim=c(0,1),y=c(0,1))
-		text(x=0.02,y=0.95,
-		     labels = paste0(LETTERS[which(VarOrder%in%Var.Use)],")"),
-		     font=2)
+		text(x = 0.02,
+		     y = 0.95,
+		     cex = 0.8,
+		     font = 2,
+		     labels = paste0(LETTERS[which(EnvVarUse%in%Var.Use)],")"),
+		     xpd =NA)
 		}
 legend("topright",
 		#inset=c(-1,0),
@@ -115,4 +128,9 @@ legend("topright",
 	                     "Holocene"),
 	xpd=NA,
 	bty="n",cex=0.6)
+mtext("Density",
+      side=2,
+      cex=0.8,
+      line=2,
+      outer=T)
 dev.off()

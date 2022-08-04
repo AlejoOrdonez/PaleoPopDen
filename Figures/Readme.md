@@ -1,3 +1,5 @@
+# Figures
+
 Here you will find the code to make all the figures/tables in the paper
 There are six(6) figures and one table.
 

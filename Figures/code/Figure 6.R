@@ -14,13 +14,13 @@ EnvVarUse <- c("ET",#ff7f00
                "PS")#cab2d6
 
 ColUse <- c("#ff7f00",#"ET"
-            "#fdbf6f",#"PET"
-            "#33a02c",#"NPP",
+            "#fee090",#"PET"
+            "#313695",#"NPP","#33a02c"
             "#a6cee3",#"MCM"
             #           "#fb9a99",#"MWM"
             "#6a3d9a",#"TS"
             "#e31a1c",#"TAP", 
-            "#b2df8a",#"PDM",
+            "#8dd3c7",#"PDM", "#fee090"
             "#1f78b4",#"PWM",
             "#cab2d6")#"PS"
 # Load Ice Layers from ICE-6G-C
@@ -112,9 +112,10 @@ EnvVarUse <- c("ET",#ff7f00
                "PS")#cab2d6
 
 
-pdf("~/Desktop/Fig_6.pdf", width = 8, height = 10)
+pdf("~/Desktop/Fig_6.pdf", width = 4, height = 8)
 ### Plot the Barplots
-par(mar=c(1,4,1,4),mfrow=c(2,1),oma=c(4,1,0,6))
+#par(mar=c(1,4,1,4),mfrow=c(2,1),oma=c(4,1,0,6))
+par(mfrow=c(2,1),mar=c(1,1,0,0),oma=c(1.5,3,0.5,0))
 # Build teh final summary for the tables
 LimFact50Tbl <- do.call("rbind",LimFact50Lst)
 row.names(LimFact50Tbl) <- LimFact50Tbl[,1]
@@ -126,8 +127,9 @@ a<-barplot(as.matrix(t(LimFact50Tbl[,-1][,order(apply(LimFact50Tbl[,-1],2,mean))
            names.arg = rep(NA,27))
 BoxLim <- par()$usr
 # add the y axis
-axis(2,las=2)
-mtext("Proportion (%) of ice-free regions in Europe\nwhere the variable is a limiting factor",side=2,line=2.5,cex=1,font=2)
+axis(2,las=2,cex.axis=0.8)
+mtext("Proportion (%) of ice-free regions in Europe\nwhere the variable is a limiting factor",
+      side=2,line=2,cex=0.8)
 # add the x axis
 axis(1,at=a,labels = NA)
 # text(x=a-0.7,
@@ -139,7 +141,8 @@ axis(1,at=a,labels = NA)
 # mtext("Thosands of Years Before Prsent (kaBP)",
 #       side=1,line=3,cex=1,font=2)
 plot.window(xlim=c(0,1),ylim=c(0,1))
-text(x=-0.15,y=1,
+text(x=-0.25,y=1.,
+     cex=0.8,
      labels = "A)",
      font=2,
      xpd=NA)
@@ -154,19 +157,21 @@ EnvVarUse <- c("ET", "PET","NPP",
                "PS"
 )
 plot.window(xlim = range(a)+c(-0.6,0.6),#c(-22,-7),
-            ylim = round(range(PopDenSumm[,-1]) + c(-0.5,0.5)))
+            #ylim = round(range(PopDenSumm[,-1]) + c(-0.5,0.5)))
+            ylim = c(0,c(round(max(PopDenSumm[,-1]) + 0.5))))
 axis(1,
      at = a,#seq(-21,-8,by=1),
      labels = NA)
 mtext("Thosands of Years Before Present (kaBP)",
-      side=1,line=3,cex=1,font=2)
+      side=1,line=1.3,cex=0.8)
 axis(2,
+     cex.axis=0.8,
      las = 2,
      xpd = NA)
-mtext(expression(bold("People per 100"~km^2)),
+mtext(expression("People per 100"~km^2),
       side = 2,
-      line = 2,
-      font=2)
+      cex=0.8,
+      line = 1.5)
 
 for(VarUse  in EnvVarUse){#(VarUse<-"NPP")
   PopDen <- data.frame(density = PopDenSumm[,VarUse],
@@ -187,8 +192,8 @@ for(VarUse  in EnvVarUse){#(VarUse<-"NPP")
 
 plot.window(xlim=range(a)+c(-0.6,0.6),ylim=c(0,1))
 text(x = a,#seq(-21,-8,by=1),
-     y = rep(-0.12,length(a)),
-     cex=0.8,
+     y = rep(-0.1,length(a)),
+     cex=0.6,
      labels = sprintf("%.1f",as.numeric(gsub("BP.","",names(IceList)))/100),#sprintf("%.1f",seq(-21,-8,by=1)*-1),
      srt=45,
      xpd=NA)
@@ -197,23 +202,25 @@ text(x = a,#seq(-21,-8,by=1),
 VarName <- c("Effective Temperature",
              "Potential Evapotraspiration",
              "Net Primary Productivity",
-             "Mean temperature\nof the Coldest Month",
-             #"Mean temperature\nof the Warmest Month",
+             "Mean Temp Coldest Month",
+             #"Mean Temp Warmest Month",
              "Temperature Seasonality",
              "Total Annual Precipitation",
-             "Prec. Dryiest Month",
-             "Prec. Wettest Month",
-             "Precipitation Seasonality")
-legend("topright",
+             "Precip. Driest Month",
+             "Precip. Wettest Month",
+             "Precip. Seasonality")
+legend("bottomleft",#"topright",
        legend=VarName,#gsub("Log10.","",EnvVarUse),
        fill=ColUse,
-       inset=c(-0.4,0),
+       ncol=2,
+       #inset=c(-0.4,0),
        xpd=NA,
-       cex=0.9,
+       cex=0.65,
        bty="n")
 plot.window(xlim=c(0,1),ylim=c(0,1))
-text(x=-0.15,y=1,
+text(x=-0.25,y=1,
      labels = "B)",
+     cex=0.8,
      font=2,
      xpd=NA)
 dev.off()
